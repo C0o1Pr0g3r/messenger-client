@@ -12,6 +12,14 @@ export type TUser = {
   password?: string;
 };
 
+export type TUserToEditAuthData = {
+  email?: TUser["email"];
+  password: TUser["password"];
+  newPassword?: TUser["password"];
+};
+
+export type TUserToEdit = Pick<TUser, "nickname">;
+
 export type TUserToRegister = Pick<TUser, "email" | "nickname" | "password">;
 export type TUserToLogin = Pick<TUser, "email" | "password">;
 

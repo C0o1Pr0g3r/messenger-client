@@ -37,10 +37,9 @@ const sender = ref<TUser>();
 onMounted(async () => {
   await updateSender();
 }),
-
-onUpdated(async () => {
-  await updateSender();
-});
+  onUpdated(async () => {
+    await updateSender();
+  });
 
 async function updateSender() {
   if (props.chat.messages.length > 0) {

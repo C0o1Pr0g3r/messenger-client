@@ -39,14 +39,14 @@ const user = ref<TUserToRegister>({
 const error = ref("");
 
 async function register() {
-  // if (form.value?.checkValidity()) {
-  const result = await authStore.register(user.value);
-  if (result instanceof Error) {
-    error.value = result.message;
-  } else {
-    router.push("/");
+  if (form.value?.checkValidity()) {
+    const result = await authStore.register(user.value);
+    if (result instanceof Error) {
+      error.value = result.message;
+    } else {
+      router.push("/");
+    }
   }
-  // }
 }
 </script>
 

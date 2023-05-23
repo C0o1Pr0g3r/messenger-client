@@ -4,6 +4,7 @@ import { AuthService } from "@/services/auth-service";
 import type {
   TRegistrationAndLoginResponse,
   TUser,
+  TUserToEditAuthData,
   TUserToLogin,
   TUserToRegister,
 } from "@/schemas/user";
@@ -44,5 +45,15 @@ export const useAuthStore = defineStore("auth", () => {
     return { status: 200, data: "Successful logout" };
   }
 
-  return { token, isLoggedIn, currentUser, register, login, logout };
+  async function updateUserAuthData(user: TUserToEditAuthData) {}
+
+  return {
+    token,
+    isLoggedIn,
+    currentUser,
+    register,
+    login,
+    logout,
+    updateUserAuthData,
+  };
 });

@@ -36,14 +36,14 @@ const user = ref<TUserToLogin>({
 const error = ref("");
 
 async function login() {
-  // if (form.value?.checkValidity()) {
-  const result = await authStore.login(user.value);
-  if (result instanceof Error) {
-    error.value = result.message;
-  } else {
-    router.push("/");
+  if (form.value?.checkValidity()) {
+    const result = await authStore.login(user.value);
+    if (result instanceof Error) {
+      error.value = result.message;
+    } else {
+      router.push("/");
+    }
   }
-  // }
 }
 </script>
 

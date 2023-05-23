@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
+import AboutView from "@/views/AboutView.vue";
 import RegistrationView from "@/views/RegistrationView.vue";
 import LoginView from "@/views/LoginView.vue";
 import { useAuthStore } from "@/stores/auth-store";
@@ -13,6 +14,11 @@ const router = createRouter({
       component: HomeView,
       beforeEnter: (to, from, next) =>
         useAuthStore().isLoggedIn ? next() : next("/login"),
+    },
+    {
+      path: "/about",
+      name: "about",
+      component: AboutView,
     },
     {
       path: "/register",
