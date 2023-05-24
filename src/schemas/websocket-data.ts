@@ -1,4 +1,5 @@
-import type { TMessage, TMessageFromServer } from "./message";
+import type { TChatFromServer } from "./chat";
+import type { TMessageFromServer } from "./message";
 
 export enum WebSocketDataType {
   SendMessage = "SendMessage",
@@ -18,6 +19,11 @@ export interface IWebSocketDataDTO<T> {
 export interface ISendTokenDTO extends IWebSocketDataDTO<string> {
   type: WebSocketDataType.Token;
 }
+
 export interface ISendMessageDTO extends IWebSocketDataDTO<TMessageFromServer> {
   type: WebSocketDataType.SendMessage;
+}
+
+export interface ICreateChatDTO extends IWebSocketDataDTO<TChatFromServer> {
+  type: WebSocketDataType.CreateChat;
 }

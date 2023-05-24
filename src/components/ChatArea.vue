@@ -6,7 +6,7 @@
         v-model="messageToSend"
         class="input-block__input"
         rows="5"
-        @keypress.enter="sendMessage"
+        @keypress="sendMessage"
       ></textarea>
       <BaseButton @click="sendMessage" class="input-block__button"
         >Send</BaseButton
@@ -42,21 +42,22 @@ const notificationStore = useNotificationStore();
 
 const messageToSend = ref<TMessageToSend["text"]>("");
 
-async function sendMessage() {
-  if (props.chat) {
-    const result = await MessageService.sendMessage({
-      text: messageToSend.value,
-      chatId: props.chat.id,
-    });
-    if (result instanceof Error) {
-      notificationStore.add(
-        new Notification(NotificationStatus.FAILURE, result.message),
-      );
-    } else {
-      messageToSend.value = "";
+async function sendMessage(ev: KeyboardEvent) {
+  if (ev.key === "Enter" && !ev.shiftKey)
+    if (props.chat) {
+      const result = await MessageService.sendMessage({
+        text: messageToSend.value,
+        chatId: props.chat.id,
+      });
+      if (result instanceof Error) {
+        notificationStore.add(
+          new Notification(NotificationStatus.FAILURE, result.message),
+        );
+      } else {
+        messageToSend.value = "";
       // emit("send-message", props.chat.id, result);
+      }
     }
-  }
 }
 </script>
 

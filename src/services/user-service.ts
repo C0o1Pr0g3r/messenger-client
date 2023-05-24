@@ -17,7 +17,6 @@ export class UserService {
       const response = await defaultAPI.get<TUserFromServer>(
         `${HTTP_SERVER_URL}users/getuserbyid?id=${id}`,
       );
-      console.log(response);
 
       return response.data;
     } catch (e) {

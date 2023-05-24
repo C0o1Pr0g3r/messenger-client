@@ -1,4 +1,5 @@
 import { WEB_SOCKET_SERVER_URL } from "@/env";
+import type { ChatType, TChat } from "@/schemas/chat";
 import type { TMessage } from "@/schemas/message";
 import { Notification, NotificationStatus } from "@/schemas/notification";
 import {
@@ -6,6 +7,7 @@ import {
   type IWebSocketDataDTO,
   type ISendTokenDTO,
   type ISendMessageDTO,
+  type ICreateChatDTO,
 } from "@/schemas/websocket-data";
 import { useNotificationStore } from "@/stores/notification-store";
 
@@ -37,37 +39,52 @@ class WebSocketConnection extends EventTarget {
     this.ws.onmessage = (ev: MessageEvent<string>) => {
       const messageEvent = JSON.parse(ev.data) as IWebSocketDataDTO<unknown>;
       switch (messageEvent.type) {
-        case WebSocketDataType.Token: {
-          const token = messageEvent.data as ISendTokenDTO["data"];
-          this.dispatchEvent(
-            new CustomEvent<ISendTokenDTO["data"]>(messageEvent.type, {
-              detail: token,
-            }),
-          );
-          break;
-        }
-        case WebSocketDataType.SendMessage: {
-          const message = messageEvent.data as ISendMessageDTO["data"];
-          this.dispatchEvent(
-            new CustomEvent<TMessage>(messageEvent.type, {
-              detail: {
-                id: message.id_message,
-                text: message.text_message,
-                date: new Date(message.data_time),
-                senderId: message.rk_user,
-                chatId: message.rk_chat,
-              } as TMessage,
-            }),
-          );
-          break;
-        }
-        default:
-          useNotificationStore().add(
-            new Notification(
-              NotificationStatus.FAILURE,
-              "WebSocket received an unexpected message",
-            ),
-          );
+      case WebSocketDataType.Token: {
+        const token = messageEvent.data as ISendTokenDTO["data"];
+        this.dispatchEvent(
+          new CustomEvent<ISendTokenDTO["data"]>(messageEvent.type, {
+            detail: token,
+          }),
+        );
+        break;
+      }
+      case WebSocketDataType.SendMessage: {
+        const message = messageEvent.data as ISendMessageDTO["data"];
+        this.dispatchEvent(
+          new CustomEvent<TMessage>(messageEvent.type, {
+            detail: {
+              id: message.id_message,
+              text: message.text_message,
+              date: new Date(message.data_time),
+              senderId: message.rk_user,
+              chatId: message.rk_chat,
+            } as TMessage,
+          }),
+        );
+        break;
+      }
+      case WebSocketDataType.CreateChat: {
+        const chat = messageEvent.data as ICreateChatDTO["data"];
+        this.dispatchEvent(
+          new CustomEvent<TChat>(messageEvent.type, {
+            detail: {
+              id: chat.id_chat,
+              name: chat.name_chat,
+              type: chat.rk_type_chat,
+              link: chat.link,
+              messages: [],
+            } as TChat,
+          }),
+        );
+        break;
+      }
+      default:
+        useNotificationStore().add(
+          new Notification(
+            NotificationStatus.FAILURE,
+            "WebSocket received an unexpected message",
+          ),
+        );
       }
     };
   }
@@ -76,8 +93,8 @@ class WebSocketConnection extends EventTarget {
     return this.ws.readyState;
   }
 
-  send(...args: Parameters<typeof this.ws.send>) {
-    this.ws.send(...args);
+  send<T>(data: T) {
+    this.ws.send(JSON.stringify(data));
   }
 
   close(...args: Parameters<typeof this.ws.close>) {

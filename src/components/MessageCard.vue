@@ -8,7 +8,7 @@
     }"
   >
     <span class="message__sender">{{ sender?.nickname }}</span>
-    <span class="message__text">{{ message.text }}</span>
+    <pre class="message__text">{{ message.text }}</pre>
     <span class="message__date">{{ message.date.toISOString() }}</span>
   </li>
 </template>
@@ -69,7 +69,9 @@ message-from-someone-else {
 }
 
 .message__text {
+  font-family: inherit;
   align-self: flex-start;
+  margin: 10px 0;
 }
 
 .message__date {

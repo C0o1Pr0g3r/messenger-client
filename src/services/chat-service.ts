@@ -32,6 +32,7 @@ export class ChatService {
     try {
       const response = await defaultAPI.post<TChatFromServer>(
         "chats/createchat",
+        chat,
       );
 
       return response.data;

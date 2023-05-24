@@ -56,12 +56,10 @@ onMounted(async () => {
       );
     }
     if (webSocketConnection.status === WebSocket.OPEN)
-      webSocketConnection.send(
-        JSON.stringify({
-          type: WebSocketDataType.Token,
-          data: authStore.token.value,
-        } as ISendTokenDTO),
-      );
+      webSocketConnection.send({
+        type: WebSocketDataType.Token,
+        data: authStore.token.value,
+      } as ISendTokenDTO);
   }
 });
 
@@ -76,6 +74,11 @@ function addMessageToChat(chatId: TChat["id"], message: TMessage) {
 webSocketConnection.addEventListener("SendMessage", (e) => {
   const message = (e as CustomEvent<TMessage>).detail;
   addMessageToChat(message.chatId, message);
+});
+
+webSocketConnection.addEventListener("CreateChat", (e) => {
+  const chat = (e as CustomEvent<TChat>).detail;
+  chatStore.chats.value.push(chat);
 });
 </script>
 

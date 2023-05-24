@@ -6,7 +6,9 @@
       :message="message"
     />
   </ul>
-  <p v-else>No messages</p>
+  <div v-else class="no-messages-wrapper">
+    <p class="no-messages">No messages</p>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -54,5 +56,17 @@ onUpdated(() => {
 
 .message-list > *:first-child {
   margin-top: 0;
+}
+
+.no-messages-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  background: linear-gradient(to right, #d4d9b7, #66997d);
+}
+
+.no-messages {
+  font-size: 36px;
 }
 </style>
