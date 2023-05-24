@@ -64,13 +64,6 @@ export const useChatStore = defineStore("chat", () => {
     if (result instanceof Error) {
       return result;
     } else {
-      _chats.value.push({
-        id: result.id_chat,
-        name: result.name_chat,
-        type: result.rk_type_chat,
-        link: result.link,
-        messages: [],
-      });
       return _chats.value[_chats.value.length - 1];
     }
   }
