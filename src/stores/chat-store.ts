@@ -41,6 +41,13 @@ export const useChatStore = defineStore("chat", () => {
                 chatId: message.rk_chat,
               };
             }),
+          users: chat.users.map((user) => {
+            return {
+              id: user.id_user,
+              email: user.email,
+              nickname: user.nickname,
+            };
+          }),
         };
       });
 

@@ -80,6 +80,13 @@ class WebSocketConnection extends EventTarget {
                 type: chat.rk_type_chat,
                 link: chat.link,
                 messages: [],
+                users: chat.users.map((user) => {
+                  return {
+                    id: user.id_user,
+                    email: user.email,
+                    nickname: user.nickname,
+                  };
+                }),
               } as TChat,
             }),
           );

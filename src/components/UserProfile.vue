@@ -1,137 +1,64 @@
 <template>
-  <form @submit.prevent class="form">
-    <div class="fields-to-fill">
-      <label for="email-to-edit">Email</label>
-      <span v-if="mode === Mode.VIEW"> {{ userToEdit.email }}</span>
-      <input
-        v-else
-        type="email"
-        id="email-to-edit"
-        v-model="userToEdit.email"
-      />
-      <label for="email-to-nickname">Nickname</label>
-      <span v-if="mode === Mode.VIEW"> {{ userToEdit.nickname }}</span>
-      <input
-        v-else
-        type="text"
-        id="nickname-to-edit"
-        v-model="userToEdit.nickname"
-      />
-      <label for="current-password">Current password</label>
-      <span v-if="mode === Mode.VIEW"> {{ userToEdit.password }}</span>
-      <input
-        v-else
-        type="password"
-        id="current-password"
-        v-model="userToEdit.password"
-      />
-      <label for="new-password">New password</label>
-      <span v-if="mode === Mode.VIEW"> {{ userToEdit.newPassword }}</span>
-      <input
-        v-else
-        type="password"
-        id="new-password"
-        v-model="userToEdit.newPassword"
-      />
-    </div>
-    <div v-if="mode === Mode.VIEW" class="button-block">
-      <BaseButton @click="enterEditMode">Edit</BaseButton>
-    </div>
-    <div v-else class="button-block">
-      <BaseButton @click="updateUser">Save</BaseButton>
-      <BaseButton @click="resetToViewMode">Cancel</BaseButton>
-    </div>
-    <div class="error">{{ error }}</div>
-  </form>
+  <div class="found-user-profile">
+    <span>Email: {{ user.email }}</span>
+    <span>Nickname: {{ user.nickname }}</span>
+    <BaseButton
+      v-if="!chatWithUserAlreadyExists"
+      @click="
+        emit('create-chat', {
+          type: ChatType.DIALOGUE,
+          interlocutorId: user.id,
+        })
+      "
+      >Create chat</BaseButton
+    >
+  </div>
 </template>
 
 <script setup lang="ts">
-import type { TUserToEdit } from "@/schemas/user";
+import { ref, onMounted } from "vue";
+import type { TUser } from "@/schemas/user";
 import BaseButton from "@/components/BaseButton.vue";
-import { useAuthStore } from "@/stores/auth-store";
-import { onMounted, ref } from "vue";
+import { ChatType, type TCreateChat } from "@/schemas/chat";
+import { useChatStore } from "@/stores/chat-store";
 
-enum Mode {
-  VIEW,
-  EDIT,
-}
+const props = defineProps<{
+  user: TUser;
+}>();
 
-const authStore = useAuthStore();
-
-const userToEdit = ref<TUserToEdit>({
-  email: "",
-  nickname: "",
-  password: "",
-  newPassword: "",
+const emit = defineEmits({
+  "create-chat"(chat: TCreateChat) {
+    return true;
+  },
 });
-const error = ref("");
+
+const chatWithUserAlreadyExists = ref(false);
 
 onMounted(() => {
-  resetToViewMode();
+  chatWithUserAlreadyExists.value = Boolean(
+    useChatStore().chats.value.find((chat) => {
+      return (
+        chat.users.find((user) => {
+          return user.id === props.user.id;
+        }) && chat.type === ChatType.DIALOGUE
+      );
+    }),
+  );
 });
-
-const mode = ref(Mode.VIEW);
-
-function enterEditMode() {
-  mode.value = Mode.EDIT;
-  userToEdit.value = {
-    email: authStore.currentUser.value?.email,
-    nickname: authStore.currentUser.value?.nickname,
-    password: "",
-    newPassword: "",
-  };
-}
-
-async function updateUser() {
-  const result = await authStore.updateUserData(userToEdit.value);
-  if (result instanceof Error) {
-    error.value = result.message;
-  } else {
-    resetToViewMode();
-  }
-}
-
-function resetToViewMode() {
-  mode.value = Mode.VIEW;
-  userToEdit.value = {
-    email: authStore.currentUser.value?.email,
-    nickname: authStore.currentUser.value?.nickname,
-    password: "",
-    newPassword: "",
-  };
-  error.value = "";
-}
 </script>
 
 <style scoped>
-.form {
+.found-user-profile {
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  align-items: center;
+  padding: 12px;
 }
 
-.form > * {
-  margin-top: 12px;
+.found-user-profile > * {
+  margin-top: 8px;
 }
 
-.form > *:first-child {
+.found-user-profile > *:first-child {
   margin-top: 0;
-}
-
-.fields-to-fill {
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-row-gap: 12px;
-  grid-column-gap: 12px;
-}
-
-.button-block {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-.error {
-  color: red;
 }
 </style>

@@ -21,6 +21,11 @@ export const useAuthStore = defineStore("auth", () => {
     const result = await AuthService.register(user);
     if (!(result instanceof Error)) {
       _token.value = result.token;
+      _currentUser.value = {
+        id: result.id_user,
+        email: result.email,
+        nickname: result.nickname,
+      };
     }
     return result;
   }

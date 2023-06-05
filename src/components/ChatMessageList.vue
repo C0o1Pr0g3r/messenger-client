@@ -46,6 +46,7 @@ onUpdated(() => {
   align-items: start;
   flex-grow: 1;
   background: linear-gradient(to right, #d4d9b7, #66997d);
+  padding: 12px;
 }
 
 .message-list > * {

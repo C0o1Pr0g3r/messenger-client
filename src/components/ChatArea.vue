@@ -1,7 +1,7 @@
 <template>
   <div v-if="chat" class="chat-area">
-    <ChatHeader :chat="chat" />
-    <ChatMessageList :messages="chat.messages" />
+    <ChatHeader :chat="chat" v-model:message-filter="messageFilter" />
+    <ChatMessageList :messages="filteredMessages" />
     <div class="input-block">
       <textarea
         v-model="messageToSend"
@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, type Ref } from "vue";
+import { computed, defineProps, ref, type Ref } from "vue";
 import ChatMessageList from "@/components/ChatMessageList.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import ChatHeader from "@/components/ChatHeader.vue";
@@ -47,6 +47,17 @@ const emit = defineEmits({
 const notificationStore = useNotificationStore();
 
 const messageToSend = ref<TMessageToSend["text"]>("");
+const messageFilter = ref("");
+
+const filteredMessages = computed(() => {
+  return (
+    props.chat?.messages.filter((message) =>
+      message.text
+        .toLocaleLowerCase()
+        .includes(messageFilter.value.toLocaleLowerCase()),
+    ) ?? []
+  );
+});
 
 async function sendMessage() {
   if (props.chat) {
@@ -60,7 +71,6 @@ async function sendMessage() {
       );
     } else {
       messageToSend.value = "";
-      // emit("send-message", props.chat.id, result);
     }
   }
 }

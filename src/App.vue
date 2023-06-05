@@ -61,7 +61,7 @@
     />
   </div>
   <ModalWindow v-if="userProfileVisibility" @close="hideUserProfile">
-    <UserProfile />
+    <CurrentUserProfile />
   </ModalWindow>
   <ModalWindow
     v-if="groupChatCreationVisibility"
@@ -76,7 +76,7 @@ import { useRouter, useRoute, RouterLink, RouterView } from "vue-router";
 import { useAuthStore } from "@/stores/auth-store";
 import { useNotificationStore } from "@/stores/notification-store";
 import ModalWindow from "@/components/ModalWindow.vue";
-import UserProfile from "@/components/UserProfile.vue";
+import CurrentUserProfile from "@/components/CurrentUserProfile.vue";
 import SimpleNotification from "@/components/SimpleNotification.vue";
 import GroupChatCreation from "./components/GroupChatCreation.vue";
 import { webSocketConnection } from "@/http/websocket";

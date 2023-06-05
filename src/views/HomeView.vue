@@ -1,7 +1,17 @@
 <template>
   <div class="layout">
     <div class="left-bar">
-      <FindUserInput @click-on-user="showUserProfile" />
+      <FindUserInput
+        :user-data-to-find="userDataToFind"
+        :found-users="foundUsers"
+        @update:user-data-to-find="
+          (value) => {
+            userDataToFind = value;
+            findUsers();
+          }
+        "
+        @click-on-user="showUserProfile"
+      />
       <ChatList
         :chats="chats"
         :selected-chat="selectedChat"
@@ -13,7 +23,7 @@
       v-if="userProfileVisibility && selectedUser"
       @close="userProfileVisibility = false"
     >
-      <FoundUserProfile :user="selectedUser" @create-chat="createChat" />
+      <UserProfile :user="selectedUser" @create-chat="createChat" />
     </ModalWindow>
   </div>
 </template>
@@ -29,7 +39,7 @@ import { APIError } from "@/schemas/api-error";
 import ChatList from "@/components/ChatList.vue";
 import ChatArea from "@/components/ChatArea.vue";
 import ModalWindow from "@/components/ModalWindow.vue";
-import FoundUserProfile from "@/components/FoundUserProfile.vue";
+import UserProfile from "@/components/UserProfile.vue";
 import FindUserInput from "@/components/FindUserInput.vue";
 import type { TMessage } from "@/schemas/message";
 import { webSocketConnection } from "@/http/websocket";
@@ -39,6 +49,7 @@ import {
 } from "@/schemas/websocket-data";
 import { useAuthStore } from "@/stores/auth-store";
 import type { TUser } from "@/schemas/user";
+import { UserService } from "@/services/user-service";
 
 const router = useRouter();
 const notificationStore = useNotificationStore();
@@ -49,6 +60,8 @@ const chats = ref<TChat[]>([]);
 const selectedChat = ref<TChat>();
 const userProfileVisibility = ref(false);
 const selectedUser = ref<TUser>();
+const userDataToFind = ref("");
+const foundUsers = ref<TUser[]>([]);
 
 onMounted(async () => {
   const result = await chatStore.getChatsOfUser();
@@ -83,6 +96,25 @@ function showUserProfile(user: TUser) {
   userProfileVisibility.value = true;
 }
 
+async function findUsers() {
+  if (userDataToFind.value.length > 2) {
+    const result = await UserService.getUsersByEmailOrNickname(
+      userDataToFind.value,
+    );
+    if (!(result instanceof Error)) {
+      foundUsers.value = result.map((user) => {
+        return {
+          id: user.id_user,
+          email: user.email,
+          nickname: user.nickname,
+        };
+      });
+    }
+  } else {
+    foundUsers.value = [];
+  }
+}
+
 async function createChat(chat: TCreateChat) {
   const result = await chatStore.createChat(chat);
   if (result instanceof Error) {
@@ -91,6 +123,8 @@ async function createChat(chat: TCreateChat) {
     );
   }
   userProfileVisibility.value = false;
+  userDataToFind.value = "";
+  foundUsers.value = [];
 }
 
 webSocketConnection.addEventListener("SendMessage", (e) => {

@@ -6,6 +6,7 @@ export type TChatFromServer = {
   name_chat: string;
   rk_type_chat: number;
   link: string;
+  users: TUserFromServer[];
 };
 
 export type TChat = {
@@ -14,6 +15,7 @@ export type TChat = {
   type: ChatType;
   link: string;
   messages: TMessage[];
+  users: TUser[];
 };
 
 export enum ChatType {
