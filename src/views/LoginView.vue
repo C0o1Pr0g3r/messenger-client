@@ -7,11 +7,11 @@
         <label for="password">Password</label>
         <input v-model="user.password" type="password" id="password" required />
       </div>
-      <button @click="login">Login</button>
+      <BaseButton @click="login">Login</BaseButton>
       <div>
         <span
           >Don't have an account?
-          <RouterLink to="/register">Create</RouterLink></span
+          <RouterLink to="/register" class="link">Create</RouterLink></span
         >
       </div>
       <div class="error">{{ error }}</div>
@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import BaseButton from "@/components/BaseButton.vue";
 import { useRouter, RouterLink } from "vue-router";
 import { useAuthStore } from "@/stores/auth-store";
 import type { TUserToLogin } from "@/schemas/user";
@@ -57,14 +58,29 @@ async function login() {
   flex-direction: column;
   align-items: center;
   background-color: rgb(230, 222, 222);
+  padding: 20px;
+}
+
+form > * {
+  margin-top: 12px;
+}
+
+form > *:first-child {
+  margin-top: 0;
 }
 
 .fields-to-fill {
   display: grid;
   grid-template-columns: auto 1fr;
+  row-gap: 12px;
+  column-gap: 8px;
 }
 
 .error {
   color: red;
+}
+
+.link {
+  text-decoration: none;
 }
 </style>
