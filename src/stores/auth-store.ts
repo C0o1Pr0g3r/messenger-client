@@ -25,6 +25,7 @@ export const useAuthStore = defineStore("auth", () => {
         id: result.id_user,
         email: result.email,
         nickname: result.nickname,
+        isPrivate: result.private_acc,
       };
     }
     return result;
@@ -38,6 +39,7 @@ export const useAuthStore = defineStore("auth", () => {
         id: result.id_user,
         email: result.email,
         nickname: result.nickname,
+        isPrivate: result.private_acc,
       };
     }
     return result;
