@@ -8,9 +8,11 @@ import type {
   TMessageToDeleteToServer,
   TMessageToEdit,
   TMessageToEditToServer,
+  TMessageToForwardToServer,
   TMessageToSend,
   TMessageToSendToServer,
 } from "@/schemas/message";
+import type { TChat } from "@/schemas/chat";
 
 export class MessageService {
   public static async getMessages() {
@@ -93,6 +95,29 @@ export class MessageService {
           id_message: message.id,
           rk_chat: message.chatId,
         } as TMessageToDeleteToServer,
+      );
+
+      return response.data;
+    } catch (e) {
+      if (e instanceof AxiosError && e.response) {
+        return new APIError(
+          (e.response as AxiosResponse<APIError>).data.message,
+          (e.response as AxiosResponse<APIError>).data.code,
+        );
+      } else {
+        return new Error("Unexpected error");
+      }
+    }
+  }
+
+  public static async forwardMessage(messageTorward: TMessage, chat: TChat) {
+    try {
+      const response = await defaultAPI.post<boolean>(
+        "messages/resendmessage",
+        {
+          id_message: messageTorward.id,
+          rk_chat: chat.id,
+        } as TMessageToForwardToServer,
       );
 
       return response.data;

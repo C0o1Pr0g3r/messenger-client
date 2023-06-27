@@ -30,6 +30,7 @@ export const useUserStore = defineStore("user", () => {
           id: result.id_user,
           email: result.email,
           nickname: result.nickname,
+          isPrivate: result.private_acc,
         });
       }
     }
@@ -37,5 +38,26 @@ export const useUserStore = defineStore("user", () => {
     return _users.value.get(id);
   }
 
-  return { getUserById };
+  async function getUserByIdFromServer(id: TUser["id"]) {
+    const result = await UserService.getUserById(id);
+    console.log("User from server:", result);
+    if (result instanceof Error) {
+      useNotificationStore().add(
+        new Notification(
+          NotificationStatus.SUCCESS,
+          "Failed to get user information",
+        ),
+      );
+      return result;
+    } else {
+      return {
+        id: result.id_user,
+        email: result.email,
+        nickname: result.nickname,
+        isPrivate: result.private_acc,
+      } as TUser;
+    }
+  }
+
+  return { getUserById, getUserByIdFromServer };
 });

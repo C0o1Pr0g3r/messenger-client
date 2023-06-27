@@ -69,6 +69,10 @@
   >
     <GroupChatCreation @create="createGroupChat" />
   </ModalWindow>
+  <audio
+    src="src/assets/sounds/mixkit-confirmation-tone-2867.wav"
+    id="new-message-sound"
+  ></audio>
 </template>
 
 <script setup lang="ts">

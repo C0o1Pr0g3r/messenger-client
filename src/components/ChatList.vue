@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
 import ChatCard from "@/components/ChatCard.vue";
 import type { TChat } from "@/schemas/chat";
 

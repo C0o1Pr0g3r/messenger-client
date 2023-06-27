@@ -31,3 +31,9 @@ export type TMessageToDeleteToServer = Pick<
   TMessageFromServer,
   "id_message" | "rk_chat"
 >;
+
+export type TMessageToForward = Pick<TMessage, "id" | "chatId">;
+export type TMessageToForwardToServer = Pick<
+  TMessageFromServer,
+  "id_message" | "rk_chat"
+>;

@@ -39,6 +39,7 @@ const emit = defineEmits({
 .notification {
   margin: 5px 0;
   padding: 5px 10px;
+  display: flex;
 }
 .success {
   background-color: lightgreen;

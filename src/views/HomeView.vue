@@ -109,6 +109,8 @@ async function findUsers() {
           nickname: user.nickname,
         };
       });
+    } else {
+      foundUsers.value = [];
     }
   } else {
     foundUsers.value = [];
@@ -130,6 +132,9 @@ async function createChat(chat: TCreateChat) {
 webSocketConnection.addEventListener("SendMessage", (e) => {
   const message = (e as CustomEvent<TMessage>).detail;
   addMessageToChat(message.chatId, message);
+  if (message.senderId !== authStore.currentUser.value?.id) {
+    (document.getElementById("new-message-sound") as HTMLAudioElement).play();
+  }
 });
 
 webSocketConnection.addEventListener("CreateChat", async (e) => {

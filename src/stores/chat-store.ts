@@ -128,6 +128,13 @@ export const useChatStore = defineStore("chat", () => {
     }
   }
 
+  async function forwardMessage(messageToForward: TMessage, chat: TChat) {
+    const result = await MessageService.forwardMessage(messageToForward, chat);
+    if (result instanceof Error) {
+      return result;
+    }
+  }
+
   function addMessageToChat(chatId: TChat["id"], message: TMessage) {
     const chat = _chats.value.find((chat) => chat.id === chatId);
     if (chat) {
@@ -142,9 +149,6 @@ export const useChatStore = defineStore("chat", () => {
         (message) => message.id === messageToEdit.id,
       );
       if (index > -1) {
-        // messageToEdit.senderId = messageToEdit.senderId
-        //   ? messageToEdit.senderId
-        //   : chat.messages[index].senderId;
         chat.messages.splice(index, 1, messageToEdit);
       }
     }
@@ -176,5 +180,6 @@ export const useChatStore = defineStore("chat", () => {
     deleteMessage,
     editMessageInChat,
     deleteMessageFromChat,
+    forwardMessage,
   };
 });
